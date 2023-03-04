@@ -2,20 +2,20 @@ const Gameboard = require("../factories/gameboard.js");
 const Ship = require("../factories/ship.js");
 
 describe("Gameboard", () => {
-  let board = new Gameboard();
+  let board;
 
-  let ship1 = new Ship(1);
-  let ship2 = new Ship(2);
-  let ship3 = new Ship(3);
-  let ship4 = new Ship(4);
+  let ship1;
+  let ship2;
+  let ship3;
+  let ship4;
 
   beforeEach(() => {
     board = new Gameboard();
 
-    ship1 = new Ship(1);
-    ship2 = new Ship(2);
-    ship3 = new Ship(3);
-    ship4 = new Ship(4);
+    ship1 = new Ship(Ship.types.find((ship) => ship.length === 5));
+    ship2 = new Ship(Ship.types.find((ship) => ship.length === 4));
+    ship3 = new Ship(Ship.types.find((ship) => ship.length === 3));
+    ship4 = new Ship(Ship.types.find((ship) => ship.length === 2));
   });
 
   test("creates valid 10x10 board", () => {
@@ -51,10 +51,10 @@ describe("Gameboard", () => {
   test("rejects invalid coordinates horizontally", () => {
     const direction = "horizontal";
 
-    board.placeShip(ship4, [9, 7], direction);
+    board.placeShip(ship1, [9, 6], direction);
+    board.placeShip(ship2, [9, 7], direction);
     board.placeShip(ship3, [9, 8], direction);
-    board.placeShip(ship2, [9, 9], direction);
-    board.placeShip(ship1, [9, 10], direction);
+    board.placeShip(ship4, [9, 9], direction);
 
     expect(board.grid[9][7]).toBe(" ");
     expect(board.grid[9][8]).toBe(" ");
@@ -63,10 +63,10 @@ describe("Gameboard", () => {
   });
 
   test("rejects invalid coordinates vertically", () => {
-    board.placeShip(ship4, [7, 0], "vertical");
+    board.placeShip(ship1, [6, 0], "vertical");
+    board.placeShip(ship2, [7, 0], "vertical");
     board.placeShip(ship3, [8, 0], "vertical");
-    board.placeShip(ship2, [9, 0], "vertical");
-    board.placeShip(ship1, [10, 0], "vertical");
+    board.placeShip(ship4, [9, 0], "vertical");
 
     expect(board.grid[9][0]).toBe(" ");
     expect(board.grid[8][0]).toBe(" ");
@@ -90,13 +90,13 @@ describe("Gameboard", () => {
   });
 
   test("report game over", () => {
-    board.placeShip(ship4, [0, 0], "horizontal");
+    board.placeShip(ship2, [0, 0], "horizontal");
     board.receiveAttack(0, 0);
     board.receiveAttack(0, 1);
     board.receiveAttack(0, 2);
-    expect(board.gameOver()).toBe(false);
+    expect(board.shipsLeft()).toBe(false);
 
     board.receiveAttack(0, 3);
-    expect(board.gameOver()).toBe(true);
+    expect(board.shipsLeft()).toBe(true);
   });
 });

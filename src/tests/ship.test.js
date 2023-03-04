@@ -2,7 +2,7 @@ const Ship = require("../factories/ship.js");
 
 describe("Ship", () => {
   test("is instantiated correctly", () => {
-    const ship = new Ship(2);
+    const ship = new Ship(Ship.types[4]);
     expect(ship.length).toBe(2);
     expect(ship.hits).toBe(0);
     expect(ship.isSunk()).toBe(false);
@@ -15,8 +15,9 @@ describe("Ship", () => {
   });
 
   test("can be sunk", () => {
-    const ship = new Ship(1);
+    const ship = new Ship(Ship.types.find((ship) => ship.length === 2));
     expect(ship.isSunk()).toBe(false);
+    ship.hit();
     ship.hit();
     expect(ship.isSunk()).toBe(true);
   });

@@ -31,7 +31,7 @@ class Gameboard {
     return x + length - 1 >= 0 && x + length - 1 <= 9 && y >= 0 && y <= 9;
   }
 
-  gameOver() {
+  shipsLeft() {
     return this.ships.every((ship) => ship.sunk);
   }
 

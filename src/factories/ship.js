@@ -1,14 +1,15 @@
 class Ship {
-  types = {
-    carrier: 5,
-    battleship: 4,
-    cruiser: 3,
-    submarine: 3,
-    destroyer: 2,
-  };
+  static types = [
+    { name: "carrier", length: 5 },
+    { name: "battleship", length: 4 },
+    { name: "cruiser", length: 3 },
+    { name: "submarine", length: 3 },
+    { name: "destroyer", length: 2 },
+  ];
 
-  constructor(length) {
-    this.length = length;
+  constructor(typeObj) {
+    this.name = typeObj.name;
+    this.length = typeObj.length;
     this.hits = 0;
     this.sunk = false;
   }
