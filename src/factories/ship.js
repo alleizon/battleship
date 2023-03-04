@@ -1,4 +1,12 @@
 class Ship {
+  types = {
+    carrier: 5,
+    battleship: 4,
+    cruiser: 3,
+    submarine: 3,
+    destroyer: 2,
+  };
+
   constructor(length) {
     this.length = length;
     this.hits = 0;
