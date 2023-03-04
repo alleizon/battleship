@@ -21,7 +21,11 @@ class Gameboard {
     return grid;
   }
 
-  isValid(x, y, length, direction) {
+  isValidCoords(x, y) {
+    return x >= 0 && y >= 0 && x <= 9 && y <= 9;
+  }
+
+  isValidShipPlacemenet(x, y, length, direction) {
     if (direction === "horizontal")
       return x >= 0 && x <= 9 && y + length - 1 >= 0 && y + length - 1 <= 9;
     return x + length - 1 >= 0 && x + length - 1 <= 9 && y >= 0 && y <= 9;
@@ -33,7 +37,12 @@ class Gameboard {
 
   placeShip(ship, start, direction) {
     const [x, y] = start;
-    const validCoords = this.isValid(x, y, ship.length, direction);
+    const validCoords = this.isValidShipPlacemenet(
+      x,
+      y,
+      ship.length,
+      direction
+    );
     if (!validCoords) return;
 
     if (direction === "horizontal") {
@@ -50,6 +59,7 @@ class Gameboard {
   }
 
   receiveAttack(x, y) {
+    if (!this.isValidCoords(x, y)) return;
     if (this.attacks.includes(`${x}${y}`)) return;
     const cell = this.grid[x][y];
     if (cell instanceof Ship) cell.hit();
