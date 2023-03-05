@@ -16,7 +16,7 @@ class Ship {
 
   hit() {
     this.hits += 1;
-    this.sunk = this.hits === this.length ? true : false;
+    this.sunk = this.hits === this.length;
   }
 
   isSunk() {

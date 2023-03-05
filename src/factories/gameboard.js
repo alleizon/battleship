@@ -1,13 +1,13 @@
-const Ship = require("../factories/ship.js");
+const Ship = require("./ship.js");
 
 class Gameboard {
   constructor() {
-    this.grid = this.initBoard();
+    this.grid = Gameboard.initBoard();
     this.attacks = [];
     this.ships = [];
   }
 
-  initBoard() {
+  static initBoard() {
     const grid = [];
 
     for (let i = 0; i < 10; i += 1) {
@@ -21,11 +21,11 @@ class Gameboard {
     return grid;
   }
 
-  isValidCoords(x, y) {
+  static isValidCoords(x, y) {
     return x >= 0 && y >= 0 && x <= 9 && y <= 9;
   }
 
-  isValidShipPlacemenet(x, y, length, direction) {
+  static isValidShipPlacemenet(x, y, length, direction) {
     if (direction === "horizontal")
       return x >= 0 && x <= 9 && y + length - 1 >= 0 && y + length - 1 <= 9;
     return x + length - 1 >= 0 && x + length - 1 <= 9 && y >= 0 && y <= 9;
@@ -37,7 +37,7 @@ class Gameboard {
 
   placeShip(ship, start, direction) {
     const [x, y] = start;
-    const validCoords = this.isValidShipPlacemenet(
+    const validCoords = Gameboard.isValidShipPlacemenet(
       x,
       y,
       ship.length,
@@ -59,7 +59,7 @@ class Gameboard {
   }
 
   receiveAttack(x, y) {
-    if (!this.isValidCoords(x, y)) return;
+    if (!Gameboard.isValidCoords(x, y)) return;
     if (this.attacks.includes(`${x}${y}`)) return;
     const cell = this.grid[x][y];
     if (cell instanceof Ship) cell.hit();

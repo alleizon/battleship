@@ -4,12 +4,12 @@ class Player {
   constructor(name) {
     this.name = name;
     this.board = new Gameboard();
-    this.enemyBoard;
     this.attacks = [];
   }
 
   generateCompAttack() {
-    let x, y;
+    let x;
+    let y;
     do {
       x = Math.floor(Math.random() * 10);
       y = Math.floor(Math.random() * 10);
@@ -18,15 +18,14 @@ class Player {
     return [x, y];
   }
 
-  sendAttack(x, y) {
+  sendAttack(enemyBoard, x, y) {
     if (x === undefined && y === undefined) {
-      const [x, y] = this.generateCompAttack();
-      this.enemyBoard.receiveAttack(x, y);
-      this.attacks.push(`${x}${y}`);
+      const [cx, cy] = this.generateCompAttack();
+      enemyBoard.receiveAttack(cx, cy);
     } else {
-      this.enemyBoard.receiveAttack(x, y);
-      this.attacks.push(`${x}${y}`);
+      enemyBoard.receiveAttack(x, y);
     }
+    this.attacks.push(`${x}${y}`);
   }
 }
 

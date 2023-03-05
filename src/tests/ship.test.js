@@ -15,7 +15,7 @@ describe("Ship", () => {
   });
 
   test("can be sunk", () => {
-    const ship = new Ship(Ship.types.find((ship) => ship.length === 2));
+    const ship = new Ship(Ship.types.find((shipO) => shipO.length === 2));
     expect(ship.isSunk()).toBe(false);
     ship.hit();
     ship.hit();
