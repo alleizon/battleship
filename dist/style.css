@@ -1,0 +1,27 @@
+@import url("css/reset.css");
+@import url("css/root.css");
+
+body {
+    height: 100vh;
+    display:flex;
+    gap: 100px;
+}
+
+body > div {
+    flex:1;
+}
+
+.grid {
+    display:grid;
+    height: 100%;
+    grid-template: repeat(10, 50px) / repeat(10,50px);
+    gap:1px;
+}
+
+.grid>div {
+    outline: 1px solid black;
+}
+
+.ship-cell {
+    background-color: rgb(44, 42, 42);
+}
