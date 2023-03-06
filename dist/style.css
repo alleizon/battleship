@@ -1,5 +1,6 @@
 @import url("css/reset.css");
 @import url("css/root.css");
+@import url("css/players-container.css");
 
 body {
     height: 100vh;
@@ -7,21 +8,7 @@ body {
     gap: 100px;
 }
 
-body > div {
+body > div.container {
     flex:1;
 }
 
-.grid {
-    display:grid;
-    height: 100%;
-    grid-template: repeat(10, 50px) / repeat(10,50px);
-    gap:1px;
-}
-
-.grid>div {
-    outline: 1px solid black;
-}
-
-.ship-cell {
-    background-color: rgb(44, 42, 42);
-}
