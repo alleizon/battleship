@@ -20,15 +20,18 @@ const Game = (() => {
     return [human, computer]; // to remove
   };
 
-  const playTurn = (x, y) => {
-    const enemy = currentPlayer === human ? computer : human;
-    currentPlayer.sendAttack(enemy.board, x, y);
-    currentPlayer = currentPlayer === human ? computer : human;
-
-    // console.log(human, computer);
+  const playHuman = (x, y) => {
+    console.log(human, computer);
+    const cell = human.sendAttack(computer.board, x, y);
+    return cell;
   };
 
-  return { isOver, newGame, playTurn };
+  const playComputer = () => {
+    const result = computer.sendAttack(human.board);
+    return result;
+  };
+
+  return { isOver, newGame, playHuman, playComputer };
 })();
 
 module.exports = Game;
