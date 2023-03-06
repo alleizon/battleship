@@ -1,7 +1,26 @@
 const Ship = require("../factories/ship.js");
 const Game = require("../game.js");
+const Utils = require("../utils.js");
 
 const gameInProgress = (() => {
+  const body = document.querySelector("body");
+  body.classList.add("in-progress");
+
+  const legend = document.createElement("div"); // r
+  legend.classList.add("legend");
+  legend.innerHTML = Utils.legendHTML();
+
+  const name = document.createElement("p");
+  name.innerHTML = `<span class="player">Player</span> turn`;
+  document.querySelector("body").appendChild(name);
+
+  const setName = (player) => {
+    name.innerHTML =
+      player === "Player"
+        ? `<span class="player">Player</span> turn`
+        : `<span class="computer">Computer</span> turn`;
+  };
+
   const restoreGridListener = (element, cb) => {
     element.addEventListener("click", cb);
   };
@@ -33,20 +52,23 @@ const gameInProgress = (() => {
       if (!(result instanceof Ship)) {
         e.target.classList.add("miss");
       }
+      if (result instanceof Ship) e.target.classList.add("ship-hit");
 
       this.removeEventListener("click", handler);
+      setName("Computer");
       setTimeout(() => {
         const cresult = Game.playComputer();
         displayComputerTurn(cresult);
         restoreGridListener(this, handler);
+        setName("Player");
       }, 1000);
     }
   }
 
-  const getNameElement = (name) => {
+  const getNameElement = (playerName) => {
     const nameP = document.createElement("p");
     nameP.classList.add("name");
-    nameP.textContent = name[0].toUpperCase() + name.slice(1);
+    nameP.textContent = playerName[0].toUpperCase() + playerName.slice(1);
 
     return nameP;
   };
@@ -76,12 +98,14 @@ const gameInProgress = (() => {
     player.id = playerObj.name;
     player.classList.add("container");
 
-    const name = getNameElement(playerObj.name);
+    const playerName = getNameElement(playerObj.name);
     const grid = getGridElement(playerObj.board.grid);
     if (playerObj.name === "computer") grid.addEventListener("click", handler);
 
-    player.append(name, grid);
-    document.querySelector("body").appendChild(player);
+    player.append(playerName, grid);
+    body.appendChild(player);
+
+    if (playerObj.name === "computer") body.appendChild(legend);
   };
 
   return { renderPlayer };

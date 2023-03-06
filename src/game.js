@@ -21,7 +21,6 @@ const Game = (() => {
   };
 
   const playHuman = (x, y) => {
-    console.log(human, computer);
     const cell = human.sendAttack(computer.board, x, y);
     return cell;
   };
