@@ -23,7 +23,11 @@ describe("Player", () => {
 
     expect(computer.board.attacks).toContain("00");
     expect(computer.board.attacks).not.toContain("-02");
+    expect(human.attacks).not.toContain("-02");
+    expect(computer.board.attacks).not.toContain("010");
+    expect(human.attacks).not.toContain("010");
     expect(computer.board.attacks).not.toContain("-13");
+    expect(human.attacks).not.toContain("-13");
   });
 
   test("computer can attack (randomly)", () => {

@@ -94,9 +94,9 @@ describe("Gameboard", () => {
     board.receiveAttack(0, 0);
     board.receiveAttack(0, 1);
     board.receiveAttack(0, 2);
-    expect(board.shipsLeft()).toBe(false);
+    expect(board.shipsSunk()).toBe(false);
 
     board.receiveAttack(0, 3);
-    expect(board.shipsLeft()).toBe(true);
+    expect(board.shipsSunk()).toBe(true);
   });
 });
