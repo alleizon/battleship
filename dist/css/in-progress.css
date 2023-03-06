@@ -1,0 +1,230 @@
+body.in-progress {
+    height: calc(100vh - 4rem);
+    display:grid;
+    grid-template-rows: repeat(3, min-content);
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    justify-content: center;
+    padding: 2rem;
+}
+
+body.in-progress > p {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+div#player > p.name,
+div#computer > p.name {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+body.in-progress > div#player,
+body.in-progress > div#computer {
+    display:flex;
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+
+body.in-progress > div#player {
+    grid-row: 2 / 3;
+    grid-column: 1/ 2;
+}
+
+body.in-progress > div#computer {
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+}
+
+body.in-progress > div.legend {
+    grid-row: 3 / 4;
+    grid-column: 1 / 3;
+}
+
+body.in-progress .grid {
+    display:grid;
+    height: fit-content;
+    width: fit-content;
+    grid-template: repeat(10, 45px) / repeat(10,45px);
+    gap: 1px;
+    padding: 1px;
+    background-color: black;
+}
+
+body.in-progress .grid > div[data-cell="cell"] {
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    background-color: white;
+}
+
+#computer > body.in-progress .grid > div[data-cell="cell"] {
+    cursor: pointer;
+}
+
+body.in-progress .grid > div[data-cell="cell"]:hover {
+    background-color: var(--ship-cell-color-hover);
+}
+
+body.in-progress .grid > div.ship-cell {
+    background-color: var(--ship-cell-color);
+}
+
+body.in-progress .grid > div[data-cell="cell"]::after,
+body.in-progress .grid > div[data-cell="cell"]::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    left: 0;
+    top: calc(50% - 2px);
+    transform: translateY(-50%);
+    background-color: red;
+    border-radius: 2px;
+    height: 4px;
+
+    opacity: 0;
+    scale: 0.1;
+    transition: opacity 0.4s ease-in-out;
+    transition: scale 0.4s ease-in-out;
+}
+
+body.in-progress .grid > div[data-cell="cell"]::after {
+    transform: rotate(45deg);
+}
+
+body.in-progress .grid > div[data-cell="cell"]::before {
+    transform: rotate(-45deg);
+}
+
+#player > .grid > div[data-cell="cell"].ship-hit::after,
+#player > .grid > div[data-cell="cell"].ship-hit::before,
+#computer > .grid > div[data-cell="cell"].miss::after,
+#computer > .grid > div[data-cell="cell"].miss::before {
+    opacity: 1;
+    scale: 1;
+}
+
+#player > .grid > div[data-cell="cell"].miss::after,
+#player > .grid > div[data-cell="cell"].miss::before,
+#computer > .grid > div[data-cell="cell"].ship-hit::after,
+#computer > .grid > div[data-cell="cell"].ship-hit::before {
+    opacity: 1;
+    scale: 1;
+    background-color: rgb(24, 146, 24);
+}
+
+#player > .grid > div[data-cell="cell"].ship-hit,
+#player > .grid > div[data-cell="cell"].ship-hit,
+#computer > .grid > div[data-cell="cell"].miss,
+#computer > .grid > div[data-cell="cell"].miss {
+    border: 2px solid red;
+}
+
+#player > .grid > div[data-cell="cell"].miss,
+#player > .grid > div[data-cell="cell"].miss,
+#computer > .grid > div[data-cell="cell"].ship-hit,
+#computer > .grid > div[data-cell="cell"].ship-hit {
+    border: 2px solid rgb(24, 146, 24);
+}
+
+body.in-progress > p {
+    font-size: 2rem;
+    font-weight: 600;
+    width: 100%;
+    flex: 0 1 100%;
+    height: fit-content;
+}
+
+body.in-progress > p > span.player {
+    color:rgb(24, 146, 24);
+}
+
+body.in-progress > p > span.computer {
+    color:red;
+}
+
+body.in-progress .legend {
+    margin-top: 20px;
+    display:flex;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+}
+
+body.in-progress .legend > p {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+body.in-progress .legend > div > div > div,
+body.in-progress .legend div.legend-ship {
+    width: 30px;
+    height: 30px;
+    border: 2px solid transparent;
+    display: inline-block;
+}
+
+body.in-progress .legend > div > span {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+body.in-progress .legend div.legend-ship {
+    position: relative;
+    border-color: black;
+    background-color: var(--ship-cell-color);
+}
+
+body.in-progress .legend div.legend-miss {
+    position: relative;
+    border-color: red;
+}
+
+body.in-progress .legend div.legend-hit {
+    position: relative;
+    border-color: rgb(24, 146, 24);
+}
+
+body.in-progress .legend > div > div > div::after,
+body.in-progress .legend > div > div > div::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    top: calc(50% - 1px);
+    left: 0;
+    height: 3px;
+    opacity: 1;
+    transform: translateY(-50%);
+}
+
+body.in-progress .legend > div > div > div::after {
+    transform: rotate(45deg);
+}
+
+body.in-progress .legend >div > div > div::before {
+    transform: rotate(-45deg);
+}
+
+body.in-progress .legend div.legend-hit::after,
+body.in-progress .legend div.legend-hit::before {
+    background-color: rgb(24, 146, 24);
+}
+
+body.in-progress .legend div.legend-miss::after,
+body.in-progress .legend div.legend-miss::before {
+    background-color: red;
+}
+
+.legend > div {
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.legend .wrapper {
+    display:flex;
+    align-items: center;
+    gap: 10px;
+}
