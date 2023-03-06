@@ -17,7 +17,7 @@ class Gameboard {
     for (let i = 0; i < 10; i += 1) {
       const row = [];
       for (let j = 0; j < 10; j += 1) {
-        row.push(" ");
+        row.push("");
       }
       grid.push(row);
     }
@@ -63,12 +63,14 @@ class Gameboard {
   }
 
   receiveAttack(x, y) {
-    if (!Gameboard.isValidCoords(x, y)) return;
-    if (this.attacks.includes(`${x}${y}`)) return;
+    if (!Gameboard.isValidCoords(x, y)) return new Error("invalid coordinates");
+    if (this.attacks.includes(`${x}${y}`))
+      return new Error("attack already occured");
     const cell = this.grid[x][y];
     if (cell instanceof Ship) cell.hit();
     else this.grid[x][y] = "X";
     this.attacks.push(`${x}${y}`);
+    return cell;
   }
 }
 

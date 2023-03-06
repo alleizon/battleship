@@ -56,10 +56,10 @@ describe("Gameboard", () => {
     board.placeShip(ship3, [9, 8], direction);
     board.placeShip(ship4, [9, 9], direction);
 
-    expect(board.grid[9][7]).toBe(" ");
-    expect(board.grid[9][8]).toBe(" ");
-    expect(board.grid[9][9]).toBe(" ");
-    expect(board.grid[9][9]).toBe(" ");
+    expect(board.grid[9][7]).toBe("");
+    expect(board.grid[9][8]).toBe("");
+    expect(board.grid[9][9]).toBe("");
+    expect(board.grid[9][9]).toBe("");
   });
 
   test("rejects invalid coordinates vertically", () => {
@@ -68,10 +68,10 @@ describe("Gameboard", () => {
     board.placeShip(ship3, [8, 0], "vertical");
     board.placeShip(ship4, [9, 0], "vertical");
 
-    expect(board.grid[9][0]).toBe(" ");
-    expect(board.grid[8][0]).toBe(" ");
-    expect(board.grid[7][0]).toBe(" ");
-    expect(board.grid[6][0]).toBe(" ");
+    expect(board.grid[9][0]).toBe("");
+    expect(board.grid[8][0]).toBe("");
+    expect(board.grid[7][0]).toBe("");
+    expect(board.grid[6][0]).toBe("");
   });
 
   test("ships can receive hits", () => {

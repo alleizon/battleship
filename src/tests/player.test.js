@@ -2,11 +2,11 @@ const Gameboard = require("../factories/gameboard.js");
 const Player = require("../factories/player.js");
 
 describe("Player", () => {
-  let human = new Player("human");
+  let human = new Player("player");
   let computer = new Player("computer");
 
   afterEach(() => {
-    human = new Player("human");
+    human = new Player("player");
     computer = new Player("computer");
   });
 
