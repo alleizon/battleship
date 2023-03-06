@@ -7,6 +7,10 @@ class Gameboard {
     this.ships = [];
   }
 
+  reset() {
+    this.grid = Gameboard.initBoard();
+  }
+
   static initBoard() {
     const grid = [];
 
@@ -31,7 +35,7 @@ class Gameboard {
     return x + length - 1 >= 0 && x + length - 1 <= 9 && y >= 0 && y <= 9;
   }
 
-  shipsLeft() {
+  shipsSunk() {
     return this.ships.every((ship) => ship.sunk);
   }
 

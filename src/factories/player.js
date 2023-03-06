@@ -22,10 +22,11 @@ class Player {
     if (x === undefined && y === undefined) {
       const [cx, cy] = this.generateCompAttack();
       enemyBoard.receiveAttack(cx, cy);
+      this.attacks.push(`${cx}${cy}`);
     } else {
       enemyBoard.receiveAttack(x, y);
     }
-    this.attacks.push(`${x}${y}`);
+    if (Gameboard.isValidCoords(x, y)) this.attacks.push(`${x}${y}`);
   }
 }
 
