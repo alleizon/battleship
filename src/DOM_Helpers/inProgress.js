@@ -6,13 +6,33 @@ const gameInProgress = (() => {
   const body = document.querySelector("body");
   body.classList.add("in-progress");
 
-  const legend = document.createElement("div"); // r
+  const legend = document.createElement("div");
   legend.classList.add("legend");
   legend.innerHTML = Utils.legendHTML();
 
   const name = document.createElement("p");
   name.innerHTML = `<span class="player">Player</span> turn`;
   document.querySelector("body").appendChild(name);
+
+  const renderResetBtn = () => {
+    const btn = document.createElement("button");
+    btn.setAttribute("type", "button");
+    btn.classList.add("reset-game");
+    btn.textContent = "Reset";
+
+    btn.addEventListener("click", () => {
+      Game.reset();
+      // TODO: add DOM reset
+    });
+
+    return btn;
+  };
+
+  const gameOver = (winner) => {
+    const strU = winner.name[0].toUpperCase() + winner.name.slice(1);
+    const strL = winner.name;
+    name.innerHTML = `<span class="${strL}">${strU}</span> wins`;
+  };
 
   const setName = (player) => {
     name.innerHTML =
@@ -49,6 +69,12 @@ const gameInProgress = (() => {
       const y = Number(e.target.dataset.col);
 
       const result = Game.playHuman(x, y);
+      if (result.winner) {
+        e.target.classList.add("ship-hit");
+        gameOver(result.winner);
+        this.removeEventListener("click", handler);
+        return;
+      }
       if (!(result instanceof Ship)) {
         e.target.classList.add("miss");
       }
@@ -58,10 +84,11 @@ const gameInProgress = (() => {
       setName("Computer");
       setTimeout(() => {
         const cresult = Game.playComputer();
+        // computer win here
         displayComputerTurn(cresult);
         restoreGridListener(this, handler);
         setName("Player");
-      }, 1000);
+      }, 0);
     }
   }
 
@@ -105,10 +132,16 @@ const gameInProgress = (() => {
     player.append(playerName, grid);
     body.appendChild(player);
 
+    if (playerObj.name === "player") body.appendChild(renderResetBtn());
     if (playerObj.name === "computer") body.appendChild(legend);
   };
 
   return { renderPlayer };
 })();
+
+const [human, computer] = Game.newGame();
+
+gameInProgress.renderPlayer(human);
+gameInProgress.renderPlayer(computer);
 
 module.exports = gameInProgress;

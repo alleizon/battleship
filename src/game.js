@@ -5,32 +5,34 @@ const Game = (() => {
   const human = new Player("player");
   const computer = new Player("computer");
 
-  let currentPlayer;
-
-  const isOver = () => currentPlayer.board.shipsSunk();
-
-  const newGame = () => {
+  const reset = () => {
     human.board.reset();
     computer.board.reset();
+  };
+
+  const newGame = () => {
+    reset();
 
     Utils.populateBoards(human.board, computer.board); // to remove. add placement
-
-    currentPlayer = human;
 
     return [human, computer]; // to remove
   };
 
   const playHuman = (x, y) => {
     const cell = human.sendAttack(computer.board, x, y);
+    if (computer.board.shipsSunk())
+      return { winner: human, loser: computer, cell };
     return cell;
   };
 
   const playComputer = () => {
     const result = computer.sendAttack(human.board);
+    if (human.board.shipsSunk())
+      return { winner: computer, loser: human, result };
     return result;
   };
 
-  return { isOver, newGame, playHuman, playComputer };
+  return { reset, newGame, playHuman, playComputer };
 })();
 
 module.exports = Game;
