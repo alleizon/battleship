@@ -4,6 +4,13 @@ const Handlers = (() => {
   let enterCell;
   let gridCellsGlobal;
 
+  const resetGlobals = () => {
+    parentShip = undefined;
+    shipCell = undefined;
+    enterCell = undefined;
+    gridCellsGlobal = undefined;
+  };
+
   const resetValidity = () => {
     const invalids = Array.from(document.querySelectorAll(".drag-invalid"));
     invalids.forEach((cell) => {
@@ -19,17 +26,15 @@ const Handlers = (() => {
     const start = (startE) => {
       //
     };
-
     const leave = (leaveE) => {
       const { relatedTarget } = leaveE;
       if (relatedTarget === document.querySelector("body#build-player-board")) {
         resetValidity();
       }
     };
-
     const enter = (enterE) => {
       resetValidity();
-      if (enterE.target.className.includes("grid-cell")) {
+      if (enterE.target.className.includes("grid-cell") && parentShip) {
         const length = Number(parentShip.dataset.shipLength);
         const shipCellIndex = Number(shipCell.dataset.index);
         const gridCellRow = Number(enterE.target.dataset.row);
@@ -68,7 +73,6 @@ const Handlers = (() => {
         }
       }
     };
-
     const end = (endE) => {
       resetValidity();
       if (gridCellsGlobal.length === +parentShip.dataset.shipLength) {
@@ -76,6 +80,7 @@ const Handlers = (() => {
           gridCell.classList.add("ship");
         });
       }
+      resetGlobals();
     };
 
     if (e.type === "dragleave") leave(e);
