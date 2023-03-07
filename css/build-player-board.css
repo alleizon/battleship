@@ -1,0 +1,95 @@
+#build-player-board {
+    height: 100vh;
+    display:grid;
+    grid-template-rows: min-content 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+#build-player-board > p {
+    grid-row: 1 / 2;
+    grid-column: 1 / -1;
+    font-weight: 600;
+    font-size: 2rem;
+    text-align: center;
+}
+
+#build-player-board > div:not(:last-child) {
+    grid-row: 2 / 3;
+}
+
+#build-player-board > .ships {
+    grid-column: 1 / 2;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    gap: 15px;
+}
+
+#build-player-board > .ships > div {
+    display:flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#build-player-board > .ships .ship {
+    display:flex;
+    width: fit-content;
+    background-color: black;
+    gap: 1px;
+    padding: 1px;
+}
+
+#build-player-board > .ships .ship-cell {
+    width: 30px;
+    height: 30px;
+    background-color: var(--ship-cell-color);
+}
+
+#build-player-board > .grid {
+    grid-column: 2 / 3;
+    display:grid;
+    grid-template: repeat(10, 40px) / repeat(10, 40px);
+    width: fit-content;
+    height: fit-content;
+    background: black;
+    gap: 1px;
+    border: 1px solid black;
+    margin: auto;
+}
+
+#build-player-board > .info {
+    grid-column: 3 / 4;
+    padding: 2rem;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#build-player-board > .info h1,
+#build-player-board > .ships h1 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+#build-player-board > .info br {
+    display:block;
+    content: "";
+    margin-top: 20px;
+}
+
+#build-player-board > .info ul {
+    margin-top: 10px;
+    display:flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+#build-player-board > .buttons {
+    grid-row: 3 / 4;
+    grid-column: 1 / -1;
+}
+
+#build-player-board > .grid > .grid-cell {
+    background-color: white;
+}
