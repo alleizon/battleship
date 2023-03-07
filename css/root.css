@@ -5,4 +5,6 @@
 
     --ship-cell-color: rgb(44, 42, 42);
     --ship-cell-color-hover: rgb(114, 109, 109);
+    --grid-cell-drag-invalid: rgb(255 125 125);
+    --grid-cell-drag-valid: rgb(151, 255, 125);
 }
