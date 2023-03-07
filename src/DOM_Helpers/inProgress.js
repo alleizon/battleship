@@ -1,6 +1,6 @@
 const Ship = require("../factories/ship.js");
 const Game = require("../game.js");
-const Utils = require("../utils.js");
+const Utils = require("./utils.js");
 
 const gameInProgress = (() => {
   const renderResetBtn = () => {

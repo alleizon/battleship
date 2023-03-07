@@ -1,5 +1,5 @@
 const Player = require("./factories/player.js");
-const Utils = require("./mock.js");
+const mock = require("./mock.js");
 
 const Game = (() => {
   const human = new Player("player");
@@ -13,7 +13,7 @@ const Game = (() => {
   const newGame = () => {
     reset();
 
-    Utils.populateBoards(human.board, computer.board); // to remove. add placement
+    mock.populateBoards(human.board, computer.board); // to remove. add placement
 
     return [human, computer]; // to remove
   };
