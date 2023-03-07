@@ -3,17 +3,6 @@ const Game = require("../game.js");
 const Utils = require("../utils.js");
 
 const gameInProgress = (() => {
-  const body = document.querySelector("body");
-  body.classList.add("in-progress");
-
-  const legend = document.createElement("div");
-  legend.classList.add("legend");
-  legend.innerHTML = Utils.legendHTML();
-
-  const name = document.createElement("p");
-  name.innerHTML = `<span class="player">Player</span> turn`;
-  document.querySelector("body").appendChild(name);
-
   const renderResetBtn = () => {
     const btn = document.createElement("button");
     btn.setAttribute("type", "button");
@@ -29,12 +18,16 @@ const gameInProgress = (() => {
   };
 
   const gameOver = (winner) => {
+    const name = document.querySelector("body.in-progress > p");
+
     const strU = winner.name[0].toUpperCase() + winner.name.slice(1);
     const strL = winner.name;
     name.innerHTML = `<span class="${strL}">${strU}</span> wins`;
   };
 
   const setName = (player) => {
+    const name = document.querySelector("body.in-progress > p");
+
     name.innerHTML =
       player === "Player"
         ? `<span class="player">Player</span> turn`
@@ -120,7 +113,7 @@ const gameInProgress = (() => {
     return gridDiv;
   };
 
-  const renderPlayer = (playerObj) => {
+  const renderPlayer = (playerObj, body, legend) => {
     const player = document.createElement("div");
     player.id = playerObj.name;
     player.classList.add("container");
@@ -136,12 +129,29 @@ const gameInProgress = (() => {
     if (playerObj.name === "computer") body.appendChild(legend);
   };
 
-  return { renderPlayer };
+  const init = (players) => {
+    const body = document.querySelector("body");
+    body.classList.add("in-progress");
+
+    const legend = document.createElement("div");
+    legend.classList.add("legend");
+    legend.innerHTML = Utils.legendHTML();
+
+    const name = document.createElement("p");
+    name.innerHTML = `<span class="player">Player</span> turn`;
+    document.querySelector("body").appendChild(name);
+
+    const [player, computer] = players;
+
+    renderPlayer(player, body, legend);
+    renderPlayer(computer, body, legend);
+  };
+
+  return { init };
 })();
 
-const [human, computer] = Game.newGame();
+// const players = Game.newGame();
 
-gameInProgress.renderPlayer(human);
-gameInProgress.renderPlayer(computer);
+// gameInProgress.init(players);
 
 module.exports = gameInProgress;
