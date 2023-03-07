@@ -1,4 +1,5 @@
-const Utils = require("../utils.js");
+const Utils = require("./utils.js");
+const Handlers = require("./handlers.js");
 
 const BuildBoard = (() => {
   const renderInfo = () => {
@@ -12,6 +13,8 @@ const BuildBoard = (() => {
   const renderGrid = () => {
     const grid = document.createElement("div");
     grid.classList.add("grid");
+    grid.addEventListener("dragenter", Handlers.drag);
+    grid.addEventListener("dragleave", Handlers.drag);
 
     for (let row = 0; row < 10; row += 1) {
       for (let col = 0; col < 10; col += 1) {
@@ -34,13 +37,14 @@ const BuildBoard = (() => {
     const shipsChildren = Array.from(ships.children).slice(1);
     shipsChildren.forEach((shipD) => {
       const target = shipD.children[1];
+      target.addEventListener("mousedown", Handlers.mouseDown);
       const length = Number(target.dataset.shipLength);
 
       for (let i = 0; i < length; i += 1) {
         const shipCell = document.createElement("div");
         shipCell.classList.add("ship-cell");
+        shipCell.dataset.index = i;
         target.appendChild(shipCell);
-        console.dir(target);
       }
     });
 
@@ -62,7 +66,6 @@ const BuildBoard = (() => {
     const title = document.createElement("p");
     title.textContent = "Build your board";
 
-    // refactor this later
     const grid = renderGrid();
     const info = renderInfo();
     const ships = renderShips();

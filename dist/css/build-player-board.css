@@ -1,8 +1,14 @@
 #build-player-board {
-    height: 100vh;
+    height: calc(100vh - 40px);
     display:grid;
     grid-template-rows: min-content 1fr 1fr;
     grid-template-columns: repeat(3, 1fr);
+    padding: 20px;
+    gap: 20px;
+}
+
+b {
+    font-weight: bold;
 }
 
 #build-player-board > p {
@@ -41,9 +47,10 @@
 }
 
 #build-player-board > .ships .ship-cell {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background-color: var(--ship-cell-color);
+    cursor: grab;
 }
 
 #build-player-board > .grid {
@@ -72,6 +79,10 @@
     font-weight: 600;
 }
 
+#build-player-board > div.info > h1 {
+    margin-bottom: 20px;
+}
+
 #build-player-board > .info br {
     display:block;
     content: "";
@@ -88,8 +99,32 @@
 #build-player-board > .buttons {
     grid-row: 3 / 4;
     grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+#build-player-board > .buttons > button {
+    width: fit-content;
+    height: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid black;
 }
 
 #build-player-board > .grid > .grid-cell {
     background-color: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.drag-invalid {
+    background-color: var(--grid-cell-drag-invalid) !important;
+}
+
+.drag-valid {
+    background-color: var(--grid-cell-drag-valid) !important;
+}
+
+#build-player-board > div.grid > div.grid-cell.ship {
+    background-color: var(--ship-cell-color);
 }

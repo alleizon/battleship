@@ -1,5 +1,5 @@
 const Player = require("./factories/player.js");
-const Utils = require("./utils.js");
+const Utils = require("./mock.js");
 
 const Game = (() => {
   const human = new Player("player");

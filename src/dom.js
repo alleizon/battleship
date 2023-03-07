@@ -1,7 +1,5 @@
-const Ship = require("./factories/ship.js");
-const Game = require("./game.js");
-
 const gameInProgress = require("./DOM_Helpers/inProgress.js");
+const BuildBoard = require("./DOM_Helpers/buildPlayerBoard.js");
 
 const DOM = (() => {})();
 
