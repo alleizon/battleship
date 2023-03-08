@@ -79,7 +79,21 @@ const Handlers = (() => {
         gridCellsGlobal.forEach((gridCell) => {
           gridCell.classList.add("ship");
         });
+        parentShip.classList.add("empty-box");
+        parentShip.setAttribute("draggable", false);
+        const parentChildren = Array.from(parentShip.children);
+        parentChildren.forEach((child) => {
+          child.classList.add("hidden");
+        });
+        const amount = document.querySelector(
+          `#${parentShip.parentElement.id} span[data-ship="amount"]`
+        );
+        amount.textContent = "0x";
+
+        parentShip.removeEventListener("dragstart", drag);
+        parentShip.removeEventListener("dragstend", drag);
       }
+
       resetGlobals();
     };
 
