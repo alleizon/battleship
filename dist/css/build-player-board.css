@@ -43,14 +43,19 @@ b {
     gap: 1px;
 }
 
-#build-player-board > .ships .ship-cell {
+#build-player-board > .ships .ship-cell,
+.placed-cell {
     width: 40px;
     height: 40px;
-    background-color: var(--ship-cell-color);
+    background-color: var(--ship-cell-color);    
+}
+
+#build-player-board > .ships .ship-cell {
     cursor: grab;
 }
 
 #build-player-board > .grid {
+    position: relative;
     grid-row: 2 / 3;
     grid-column: 2 / 3;
     display:grid;
@@ -137,4 +142,20 @@ b {
 .ships > div > div > div.ship-cell.hidden {
     opacity: 0;
     cursor: default !important;
+}
+
+#build-player-board > div.grid > div:not(.grid-cell) {
+    position: absolute;
+    display: flex;
+    gap: 1px;
+}
+
+#build-player-board > div.grid > div:not(.grid-cell).flip {
+    flex-direction: column;
+}
+
+.flip-error {
+    border: 1px solid red;
+    background-color: red;
+    z-index: 10;
 }

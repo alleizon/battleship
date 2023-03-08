@@ -1,3 +1,5 @@
+const ShipElement = require("../factories/ShipElement.js");
+
 const Handlers = (() => {
   let parentShip;
   let shipCell;
@@ -20,6 +22,70 @@ const Handlers = (() => {
     valids.forEach((cell) => {
       cell.classList.remove("drag-valid");
     });
+  };
+
+  // fix placing when dropping outside the area
+
+  const flipError = (element) => {
+    element.classList.add("flip-error");
+    setTimeout(() => {
+      element.classList.remove("flip-error");
+    }, 1500);
+  };
+
+  const absFlip = (e) => {
+    const isParent = !e.target.className.includes("placed-cell");
+
+    const element = isParent ? e.target : e.target.parentElement;
+    const { length } = element.children;
+    const startX = +element.children[0].dataset.placedCol;
+    const startY = +element.children[0].dataset.placedRow;
+
+    const newOccupied = [];
+
+    if (element.className.includes("flip")) {
+      for (let i = 1; i < length; i += 1) {
+        const cell = document.querySelector(
+          `.grid-cell[data-row="${startY}"][data-col="${startX + i}"]`
+        );
+        if (cell.dataset.occupied === "true") {
+          flipError(element);
+          return;
+        }
+        newOccupied.push(cell);
+      }
+    } else {
+      for (let i = 1; i < length; i += 1) {
+        const cell = document.querySelector(
+          `.grid-cell[data-row="${startY + i}"][data-col="${startX}"]`
+        );
+        if (!cell) debugger;
+        if (cell.dataset.occupied === "true") {
+          flipError(element);
+          return;
+        }
+        newOccupied.push(cell);
+      }
+    }
+    newOccupied.forEach((el, i) => {
+      const gridCellE = el;
+      gridCellE.dataset.occupied = "true";
+      const newRow = +gridCellE.dataset.row;
+      const newCol = +gridCellE.dataset.col;
+      const oldRow = element.children[i + 1].dataset.placedRow;
+      const oldCol = element.children[i + 1].dataset.placedCol;
+      element.children[i + 1].dataset.placedRow = newRow;
+      element.children[i + 1].dataset.placedCol = newCol;
+      const oldCell = document.querySelector(
+        `.grid-cell[data-row="${oldRow}"][data-col="${oldCol}"]`
+      );
+      oldCell.dataset.occupied = "false";
+    });
+    element.classList.toggle("flip");
+  };
+
+  const absDrag = (e) => {
+    //
   };
 
   const drag = (e) => {
@@ -76,9 +142,26 @@ const Handlers = (() => {
     const end = (endE) => {
       resetValidity();
       if (gridCellsGlobal.length === +parentShip.dataset.shipLength) {
-        gridCellsGlobal.forEach((gridCell) => {
-          gridCell.classList.add("ship");
+        const sName = parentShip.parentElement.id;
+        const length = parentShip.dataset.shipLength;
+        const xOff = +gridCellsGlobal[0].dataset.col;
+        const yOff = +gridCellsGlobal[0].dataset.row;
+
+        const absShip = new ShipElement(sName, length, xOff, yOff);
+        document
+          .querySelector("#build-player-board > div.grid")
+          .appendChild(absShip.element);
+
+        Array.from(absShip.element.children).forEach((child) => {
+          const gridC = document.querySelector(
+            `.grid-cell[data-row="${child.dataset.placedRow}"][data-col="${child.dataset.placedCol}"]`
+          );
+          gridC.dataset.occupied = true;
         });
+
+        absShip.element.addEventListener("mousedown", absDrag);
+        absShip.element.addEventListener("click", absFlip);
+
         parentShip.classList.add("empty-box");
         parentShip.setAttribute("draggable", false);
         const parentChildren = Array.from(parentShip.children);
