@@ -3,14 +3,30 @@ const ShipElement = require("../factories/ShipElement.js");
 const Handlers = (() => {
   let parentShip;
   let shipCell;
-  let enterCell;
-  let gridCellsGlobal;
+  let gridCellsGlobal = [];
 
-  const resetGlobals = () => {
+  let absStartX;
+  let absStartY;
+  let absEndX;
+  let absEndY;
+  let absStartLeft;
+  let absStartTop;
+  let elementClicked;
+
+  const resetShipGlobals = () => {
     parentShip = undefined;
     shipCell = undefined;
-    enterCell = undefined;
-    gridCellsGlobal = undefined;
+    gridCellsGlobal = [];
+  };
+
+  const resetAbsGlobals = () => {
+    absStartX = undefined;
+    absStartY = undefined;
+    absEndX = undefined;
+    absEndY = undefined;
+    absStartLeft = undefined;
+    absStartTop = undefined;
+    elementClicked = undefined;
   };
 
   const resetValidity = () => {
@@ -24,8 +40,6 @@ const Handlers = (() => {
     });
   };
 
-  // fix placing when dropping outside the area
-
   const flipError = (element) => {
     element.classList.add("flip-error");
     setTimeout(() => {
@@ -34,6 +48,10 @@ const Handlers = (() => {
   };
 
   const absFlip = (e) => {
+    if (absStartX !== absEndX && absStartY !== absEndY) {
+      resetAbsGlobals();
+      return;
+    }
     const isParent = !e.target.className.includes("placed-cell");
 
     const element = isParent ? e.target : e.target.parentElement;
@@ -44,6 +62,10 @@ const Handlers = (() => {
     const newOccupied = [];
 
     if (element.className.includes("flip")) {
+      if (startX + length > 10) {
+        flipError(element);
+        return;
+      }
       for (let i = 1; i < length; i += 1) {
         const cell = document.querySelector(
           `.grid-cell[data-row="${startY}"][data-col="${startX + i}"]`
@@ -55,11 +77,14 @@ const Handlers = (() => {
         newOccupied.push(cell);
       }
     } else {
+      if (startY + length > 10) {
+        flipError(element);
+        return;
+      }
       for (let i = 1; i < length; i += 1) {
         const cell = document.querySelector(
           `.grid-cell[data-row="${startY + i}"][data-col="${startX}"]`
         );
-        if (!cell) debugger;
         if (cell.dataset.occupied === "true") {
           flipError(element);
           return;
@@ -84,17 +109,44 @@ const Handlers = (() => {
     element.classList.toggle("flip");
   };
 
-  const absDrag = (e) => {
-    //
+  const absDrag = (e, type) => {
+    let dragX;
+    let dragY;
+
+    if (type === "drop") {
+      absEndX = +e.x;
+      absEndY = +e.y;
+      elementClicked = undefined;
+      return;
+    }
+
+    if (type === "start") {
+      elementClicked = e.target.className.includes("placed-cell")
+        ? e.target.parentElement
+        : e.target;
+      absStartX = +e.x;
+      absStartY = +e.y;
+      absStartLeft = +elementClicked.style.left.slice(0, -2);
+      absStartTop = +elementClicked.style.top.slice(0, -2);
+      return;
+    }
+
+    if (type === "drag") {
+      if (!elementClicked) return;
+      dragX = +e.x;
+      dragY = +e.y;
+      const newX = dragX - absStartX;
+      const newY = dragY - absStartY;
+      elementClicked.style.left = `${absStartLeft + newX}px`;
+      elementClicked.style.top = `${absStartTop + newY}px`;
+    }
   };
 
   const drag = (e) => {
-    const start = (startE) => {
-      //
-    };
     const leave = (leaveE) => {
       const { relatedTarget } = leaveE;
       if (relatedTarget === document.querySelector("body#build-player-board")) {
+        gridCellsGlobal = [];
         resetValidity();
       }
     };
@@ -141,6 +193,7 @@ const Handlers = (() => {
     };
     const end = (endE) => {
       resetValidity();
+      if (!gridCellsGlobal.length) return;
       if (gridCellsGlobal.length === +parentShip.dataset.shipLength) {
         const sName = parentShip.parentElement.id;
         const length = parentShip.dataset.shipLength;
@@ -159,8 +212,13 @@ const Handlers = (() => {
           gridC.dataset.occupied = true;
         });
 
-        absShip.element.addEventListener("mousedown", absDrag);
         absShip.element.addEventListener("click", absFlip);
+        absShip.element.addEventListener("mousedown", (eDragStart) =>
+          absDrag(eDragStart, "start")
+        );
+        absShip.element.addEventListener("mouseup", (eDragEnd) =>
+          absDrag(eDragEnd, "drop")
+        );
 
         parentShip.classList.add("empty-box");
         parentShip.setAttribute("draggable", false);
@@ -177,7 +235,7 @@ const Handlers = (() => {
         parentShip.removeEventListener("dragstend", drag);
       }
 
-      resetGlobals();
+      resetShipGlobals();
     };
 
     if (e.type === "dragleave") leave(e);
@@ -191,6 +249,8 @@ const Handlers = (() => {
     parentShip.addEventListener("dragstart", drag);
     parentShip.addEventListener("dragend", drag);
   };
+
+  window.addEventListener("mousemove", (e) => absDrag(e, "drag"));
 
   return { mouseDown, drag };
 })();
