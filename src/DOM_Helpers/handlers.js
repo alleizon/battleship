@@ -12,6 +12,135 @@ const Handlers = (() => {
   let absStartLeft;
   let absStartTop;
   let elementClicked;
+  let startGridCells;
+
+  const updatePlacedShip = () => {
+    if (absStartX === absEndX && absStartY === absEndY) return;
+    const direction = elementClicked.className.includes("flip")
+      ? "vertical"
+      : "horizontal";
+    const leftStart = +elementClicked.style.left.slice(0, -2);
+    const topStart = +elementClicked.style.top.slice(0, -2);
+    const { length } = elementClicked.children;
+    const leftEnd =
+      direction === "horizontal" ? leftStart + (length - 1) * 41 : leftStart;
+    const topEnd =
+      direction === "vertical" ? topStart + (length - 1) * 41 : topStart;
+
+    const gridCells = Array.from(
+      document.querySelectorAll(".grid > .grid-cell")
+    );
+    const toUpdate = [];
+
+    gridCells.forEach((gridCell) => {
+      if (
+        gridCell.offsetLeft >= leftStart &&
+        gridCell.offsetLeft <= leftEnd &&
+        gridCell.offsetTop >= topStart &&
+        gridCell.offsetTop <= topEnd
+      ) {
+        toUpdate.push(gridCell);
+      }
+    });
+
+    toUpdate.forEach((gcell) => {
+      const gcellCpy = gcell;
+      gcellCpy.dataset.occupied = elementClicked.id;
+    });
+    const placedChildren = Array.from(elementClicked.children);
+    placedChildren.forEach((oldPlacedC, i) => {
+      const cpy = oldPlacedC;
+      cpy.dataset.placedRow = toUpdate[i].dataset.row;
+      cpy.dataset.placedCol = toUpdate[i].dataset.col;
+    });
+    [...startGridCells].forEach((gcOld) => {
+      const cpy = gcOld;
+      cpy.dataset.occupied = "none";
+    });
+  };
+
+  const stickAbsShip = (startCell) => {
+    const left = startCell.offsetLeft;
+    const top = startCell.offsetTop;
+    elementClicked.style.left = `${left}px`;
+    elementClicked.style.top = `${top}px`;
+  };
+
+  const validateAbsDrag = (gridCell) => {
+    const { length } = elementClicked.children;
+    const direction = elementClicked.className.includes("flip")
+      ? "vertical"
+      : "horizontal";
+    const row = +gridCell.dataset.row;
+    const col = +gridCell.dataset.col;
+
+    const addedCells = [];
+
+    if (direction === "horizontal") {
+      if (length + col > 10) {
+        // error
+        return false;
+      }
+      for (let i = 0; i < length; i += 1) {
+        const checkCell = document.querySelector(
+          `.grid-cell[data-row="${row}"][data-col="${col + i}"]`
+        );
+        if (
+          checkCell.dataset.occupied !== elementClicked.id &&
+          checkCell.dataset.occupied !== "none"
+        ) {
+          // error
+          return false;
+        }
+        addedCells.push(checkCell);
+      }
+    } else {
+      if (length + row > 10) {
+        // error
+        return false;
+      }
+      for (let i = 0; i < length; i += 1) {
+        const checkCell = document.querySelector(
+          `.grid-cell[data-row="${row + i}"][data-col="${col}"]`
+        );
+        if (
+          checkCell.dataset.occupied !== elementClicked.id &&
+          checkCell.dataset.occupied !== "none"
+        ) {
+          // error
+          return false;
+        }
+        addedCells.push(checkCell);
+      }
+    }
+    return addedCells.length === length;
+  };
+
+  const getGridCellByOffset = (mouseX, mouseY) => {
+    const CELL_LENGTH = 41;
+    const CELL_HEIGHT = 41;
+
+    const diffX = mouseX % CELL_LENGTH;
+    const diffY = mouseY % CELL_HEIGHT;
+    const cellStartX = mouseX - diffX;
+    const cellStartY = mouseY - diffY;
+
+    const children = Array.from(
+      document.querySelectorAll("body#build-player-board > .grid > .grid-cell")
+    );
+
+    let cell;
+    for (let i = 0; i < children.length; i += 1) {
+      if (
+        children[i].offsetLeft === cellStartX &&
+        children[i].offsetTop === cellStartY
+      ) {
+        cell = children[i];
+        break;
+      }
+    }
+    return cell;
+  };
 
   const resetShipGlobals = () => {
     parentShip = undefined;
@@ -27,6 +156,7 @@ const Handlers = (() => {
     absStartLeft = undefined;
     absStartTop = undefined;
     elementClicked = undefined;
+    startGridCells = [];
   };
 
   const resetValidity = () => {
@@ -70,7 +200,7 @@ const Handlers = (() => {
         const cell = document.querySelector(
           `.grid-cell[data-row="${startY}"][data-col="${startX + i}"]`
         );
-        if (cell.dataset.occupied === "true") {
+        if (cell.dataset.occupied !== "none") {
           flipError(element);
           return;
         }
@@ -85,7 +215,7 @@ const Handlers = (() => {
         const cell = document.querySelector(
           `.grid-cell[data-row="${startY + i}"][data-col="${startX}"]`
         );
-        if (cell.dataset.occupied === "true") {
+        if (cell.dataset.occupied !== "none") {
           flipError(element);
           return;
         }
@@ -94,7 +224,7 @@ const Handlers = (() => {
     }
     newOccupied.forEach((el, i) => {
       const gridCellE = el;
-      gridCellE.dataset.occupied = "true";
+      gridCellE.dataset.occupied = element.id;
       const newRow = +gridCellE.dataset.row;
       const newCol = +gridCellE.dataset.col;
       const oldRow = element.children[i + 1].dataset.placedRow;
@@ -104,18 +234,27 @@ const Handlers = (() => {
       const oldCell = document.querySelector(
         `.grid-cell[data-row="${oldRow}"][data-col="${oldCol}"]`
       );
-      oldCell.dataset.occupied = "false";
+      oldCell.dataset.occupied = "none";
     });
     element.classList.toggle("flip");
   };
 
   const absDrag = (e, type) => {
+    const MIN_MOUSE = 0;
+    const MAX_MOUSE = 10 * 41;
     let dragX;
     let dragY;
 
     if (type === "drop") {
+      if (elementClicked.className.includes("invalid")) {
+        elementClicked.style.left = `${absStartLeft}px`;
+        elementClicked.style.top = `${absStartTop}px`;
+        elementClicked = undefined;
+        return;
+      }
       absEndX = +e.x;
       absEndY = +e.y;
+      updatePlacedShip();
       elementClicked = undefined;
       return;
     }
@@ -124,6 +263,9 @@ const Handlers = (() => {
       elementClicked = e.target.className.includes("placed-cell")
         ? e.target.parentElement
         : e.target;
+      startGridCells = document.querySelectorAll(
+        `body > .grid > .grid-cell[data-occupied="${elementClicked.id}"]`
+      );
       absStartX = +e.x;
       absStartY = +e.y;
       absStartLeft = +elementClicked.style.left.slice(0, -2);
@@ -132,13 +274,34 @@ const Handlers = (() => {
     }
 
     if (type === "drag") {
+      let isValid;
       if (!elementClicked) return;
+      const mouseX = elementClicked.offsetLeft + e.layerX;
+      const mouseY = elementClicked.offsetTop + e.layerY;
+      const mouseCell = getGridCellByOffset(mouseX, mouseY);
+      if (
+        mouseX > MIN_MOUSE &&
+        mouseX < MAX_MOUSE &&
+        mouseY > MIN_MOUSE &&
+        mouseY < MAX_MOUSE
+      ) {
+        isValid = validateAbsDrag(mouseCell);
+      }
+
+      if (isValid) {
+        elementClicked.classList.add("valid");
+        elementClicked.classList.remove("invalid");
+        stickAbsShip(mouseCell);
+        return;
+      }
       dragX = +e.x;
       dragY = +e.y;
       const newX = dragX - absStartX;
       const newY = dragY - absStartY;
       elementClicked.style.left = `${absStartLeft + newX}px`;
       elementClicked.style.top = `${absStartTop + newY}px`;
+      elementClicked.classList.add("invalid");
+      elementClicked.classList.remove("valid");
     }
   };
 
@@ -191,7 +354,7 @@ const Handlers = (() => {
         }
       }
     };
-    const end = (endE) => {
+    const end = () => {
       resetValidity();
       if (!gridCellsGlobal.length) return;
       if (gridCellsGlobal.length === +parentShip.dataset.shipLength) {
@@ -209,7 +372,7 @@ const Handlers = (() => {
           const gridC = document.querySelector(
             `.grid-cell[data-row="${child.dataset.placedRow}"][data-col="${child.dataset.placedCol}"]`
           );
-          gridC.dataset.occupied = true;
+          gridC.dataset.occupied = absShip.element.id;
         });
 
         absShip.element.addEventListener("click", absFlip);
@@ -250,9 +413,13 @@ const Handlers = (() => {
     parentShip.addEventListener("dragend", drag);
   };
 
-  window.addEventListener("mousemove", (e) => absDrag(e, "drag"));
+  window.addEventListener("load", () => {
+    document
+      .querySelector("body > .grid")
+      .addEventListener("mousemove", (e) => absDrag(e, "drag"));
+  });
 
-  return { mouseDown, drag };
+  return { mouseDown, drag, absDrag };
 })();
 
 module.exports = Handlers;

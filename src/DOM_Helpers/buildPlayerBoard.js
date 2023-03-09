@@ -21,7 +21,7 @@ const BuildBoard = (() => {
         const cell = document.createElement("div");
         cell.dataset.row = row;
         cell.dataset.col = col;
-        cell.dataset.occupied = false;
+        cell.dataset.occupied = "none";
         cell.classList.add("grid-cell");
         grid.appendChild(cell);
       }
