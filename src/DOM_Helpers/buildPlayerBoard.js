@@ -3,7 +3,6 @@ const Handlers = require("./handlers.js");
 const ShipElement = require("../factories/ShipElement.js");
 const Ship = require("../factories/ship.js");
 const Game = require("../game.js");
-const gameInProgress = require("./inProgress.js");
 
 const BuildBoard = (() => {
   const renderInfo = () => {
@@ -56,14 +55,17 @@ const BuildBoard = (() => {
     return ships;
   };
 
-  const start = (e) => {
+  const start = () => {
     const shipsPlaced = document.querySelectorAll(".grid > .placed-ship");
+    const btn = document.querySelector(
+      "body#build-player-board > .buttons > button.start"
+    );
     if (shipsPlaced.length !== 5) {
-      e.target.classList.add("err");
+      btn.classList.add("err");
       setTimeout(() => {
-        e.target.classList.remove("err");
+        btn.classList.remove("err");
       }, 2000);
-      return;
+      return null;
     }
     const ships = [...shipsPlaced].map((ship) => {
       const shipObj = Ship.types.find((shipT) => shipT.name === ship.id);
@@ -85,7 +87,7 @@ const BuildBoard = (() => {
     document.querySelector("body#build-player-board").remove();
     const newBody = document.createElement("body");
     document.querySelector("html").appendChild(newBody);
-    gameInProgress.init(players);
+    return players;
   };
 
   const reset = () => {
@@ -202,7 +204,6 @@ const BuildBoard = (() => {
     buttons.classList.add("buttons");
     buttons.innerHTML = Utils.buttonsHTML();
 
-    buttons.children[0].addEventListener("click", start);
     buttons.children[1].addEventListener("click", randomise);
     buttons.children[2].addEventListener("click", reset);
 
@@ -221,11 +222,11 @@ const BuildBoard = (() => {
     const ships = renderShips();
     const buttons = renderButtons();
     body.append(title, ships, grid, info, buttons);
+
+    return start;
   };
 
   return { init };
 })();
-
-BuildBoard.init();
 
 module.exports = BuildBoard;

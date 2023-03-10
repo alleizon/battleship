@@ -2,17 +2,19 @@ const Ship = require("../factories/ship.js");
 const Game = require("../game.js");
 const Utils = require("./utils.js");
 
-const gameInProgress = (() => {
+const GameInProgress = (() => {
+  const reset = () => {
+    document.querySelector("body.in-progress").remove();
+    const newBody = document.createElement("body");
+    document.querySelector("html").appendChild(newBody);
+    Game.reset();
+  };
+
   const renderResetBtn = () => {
     const btn = document.createElement("button");
     btn.setAttribute("type", "button");
     btn.classList.add("reset-game");
     btn.textContent = "Reset";
-
-    btn.addEventListener("click", () => {
-      Game.reset();
-      // TODO: add DOM reset
-    });
 
     return btn;
   };
@@ -154,9 +156,11 @@ const gameInProgress = (() => {
 
     renderPlayer(player, body, legend);
     renderPlayer(computer, body, legend);
+
+    return reset;
   };
 
   return { init };
 })();
 
-module.exports = gameInProgress;
+module.exports = GameInProgress;

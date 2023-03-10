@@ -492,11 +492,7 @@ const Handlers = (() => {
     parentShip.addEventListener("dragend", drag);
   };
 
-  window.addEventListener("load", () => {
-    document
-      .querySelector("body > .grid")
-      .addEventListener("mousemove", (e) => absDrag(e, "drag"));
-  });
+  window.addEventListener("mousemove", (e) => absDrag(e, "drag"));
 
   return { mouseDown, drag, absDrag, absFlip };
 })();
