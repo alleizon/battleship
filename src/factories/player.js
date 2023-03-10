@@ -6,6 +6,9 @@ class Player {
     this.board = new Gameboard();
     this.sendAttack = this.createSendAttack(name);
     this.attacks = [];
+    if (name === "computer") {
+      Gameboard.random(this.board);
+    }
   }
 
   createSendAttack(name) {

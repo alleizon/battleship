@@ -1,9 +1,8 @@
 const Player = require("./factories/player.js");
-const mock = require("./mock.js");
 
 const Game = (() => {
-  const human = new Player("player");
-  const computer = new Player("computer");
+  let human;
+  let computer;
 
   const reset = () => {
     human.board.reset();
@@ -11,9 +10,8 @@ const Game = (() => {
   };
 
   const newGame = (ships) => {
-    reset();
-
-    mock.populateBoards(computer.board); // randomise
+    human = new Player("player");
+    computer = new Player("computer");
 
     ships.forEach((element) => {
       human.board.placeShip(element.ship, element.start, element.direction);

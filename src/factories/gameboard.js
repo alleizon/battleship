@@ -11,6 +11,19 @@ class Gameboard {
     this.grid = Gameboard.initBoard();
   }
 
+  static random(board) {
+    let placedShips = 0;
+    while (placedShips < 5) {
+      const rnd = Math.floor(Math.random() * 2);
+      const direction = rnd ? "vertical" : "horizontal";
+      const ship = new Ship(Ship.types[placedShips]);
+      const x = Math.floor(Math.random() * 10);
+      const y = Math.floor(Math.random() * 10);
+      const isShip = board.placeShip(ship, [x, y], direction);
+      if (isShip) placedShips += 1;
+    }
+  }
+
   static initBoard() {
     const grid = [];
 
@@ -47,19 +60,30 @@ class Gameboard {
       ship.length,
       direction
     );
-    if (!validCoords) return;
-
+    if (!validCoords) return null;
+    const addedShips = [];
     if (direction === "horizontal") {
       for (let i = 0; i < ship.length; i += 1) {
-        this.grid[x][y + i] = ship;
+        if (!(this.grid[x][y + i] instanceof Ship)) {
+          addedShips.push([x, y + i]);
+        }
       }
     } else {
       for (let i = 0; i < ship.length; i += 1) {
-        this.grid[x + i][y] = ship;
+        if (!(this.grid[x + i][y] instanceof Ship)) {
+          addedShips.push([x + i, y]);
+        }
       }
     }
-
-    this.ships.push(ship);
+    if (addedShips.length === ship.length) {
+      addedShips.forEach((coords) => {
+        const [nx, ny] = coords;
+        this.grid[nx][ny] = ship;
+      });
+      this.ships.push(ship);
+      return ship;
+    }
+    return null;
   }
 
   receiveAttack(x, y) {

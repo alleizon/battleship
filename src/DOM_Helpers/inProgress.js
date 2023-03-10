@@ -63,6 +63,7 @@ const gameInProgress = (() => {
 
       const result = Game.playHuman(x, y);
       if (result.winner) {
+        e.target.classList.add("ship-cell");
         e.target.classList.add("ship-hit");
         gameOver(result.winner);
         this.removeEventListener("click", handler);
@@ -71,13 +72,21 @@ const gameInProgress = (() => {
       if (!(result instanceof Ship)) {
         e.target.classList.add("miss");
       }
-      if (result instanceof Ship) e.target.classList.add("ship-hit");
+      if (result instanceof Ship) {
+        e.target.classList.add("ship-cell");
+        e.target.classList.add("ship-hit");
+      }
 
       this.removeEventListener("click", handler);
       setName("Computer");
       setTimeout(() => {
         const cresult = Game.playComputer();
-        // computer win here
+        if (cresult.winner) {
+          gameOver(cresult.winner);
+          displayComputerTurn(cresult.result);
+          this.removeEventListener("click", handler);
+          return;
+        }
         displayComputerTurn(cresult);
         restoreGridListener(this, handler);
         setName("Player");
@@ -93,14 +102,16 @@ const gameInProgress = (() => {
     return nameP;
   };
 
-  const getGridElement = (grid) => {
+  const getGridElement = (grid, playerName) => {
     const gridDiv = document.createElement("div");
     gridDiv.classList.add("grid");
     for (let row = 0; row < grid.length; row += 1) {
       for (let col = 0; col < grid[row].length; col += 1) {
         const div = document.createElement("div");
         if (grid[row][col] instanceof Ship) {
-          div.classList.add("ship-cell");
+          if (playerName === "player") {
+            div.classList.add("ship-cell");
+          }
         }
         div.dataset.cell = "cell";
         div.dataset.row = row;
@@ -118,7 +129,7 @@ const gameInProgress = (() => {
     player.classList.add("container");
 
     const playerName = getNameElement(playerObj.name);
-    const grid = getGridElement(playerObj.board.grid);
+    const grid = getGridElement(playerObj.board.grid, playerObj.name);
     if (playerObj.name === "computer") grid.addEventListener("click", handler);
 
     player.append(playerName, grid);
