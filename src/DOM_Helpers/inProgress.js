@@ -140,8 +140,8 @@ const gameInProgress = (() => {
     const name = document.createElement("p");
     name.innerHTML = `<span class="player">Player</span> turn`;
     document.querySelector("body").appendChild(name);
-
     const [player, computer] = players;
+    console.log(player);
 
     renderPlayer(player, body, legend);
     renderPlayer(computer, body, legend);
@@ -149,9 +149,5 @@ const gameInProgress = (() => {
 
   return { init };
 })();
-
-// const players = Game.newGame();
-
-// gameInProgress.init(players);
 
 module.exports = gameInProgress;

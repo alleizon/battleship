@@ -474,7 +474,7 @@ const Handlers = (() => {
         amount.textContent = "0x";
 
         parentShip.removeEventListener("dragstart", drag);
-        parentShip.removeEventListener("dragstend", drag);
+        parentShip.removeEventListener("dragend", drag);
       }
 
       resetShipGlobals();
@@ -498,7 +498,7 @@ const Handlers = (() => {
       .addEventListener("mousemove", (e) => absDrag(e, "drag"));
   });
 
-  return { mouseDown, drag, absDrag };
+  return { mouseDown, drag, absDrag, absFlip };
 })();
 
 module.exports = Handlers;

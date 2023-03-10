@@ -25,7 +25,9 @@ const Utils = (() => {
     <p>Drag and drop the ships from the left of the grid to build your board.
       <br>
       By default, ships are placed horizontaly. Once placed on the board,
-      click on the ship to flip it vertically (however ships can't overlap).
+      click on the ship to flip it vertically, or drag and drop to reposition. 
+      <br>
+      Keep in mind the ships can't overlap with eachother.
       <br>
       Options:
     </p>
