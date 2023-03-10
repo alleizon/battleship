@@ -119,6 +119,42 @@ b {
     font-weight: 600;
     font-size: 1rem;
     border: 1px solid black;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+#build-player-board > .buttons > button:hover {
+    transform: scale(1.1);
+}
+
+#build-player-board > .buttons > .start.err {
+    position: relative;
+}
+
+#build-player-board > .buttons > .start.err::after {
+    position: absolute;
+    content: attr(data-err-tip);
+    width: 200%;
+    top: 130%;
+    left: calc(-50% - 8px);
+    font-size: 0.8rem;
+    background-color: rgb(0, 22, 48);
+    border-radius: 5px;
+    padding: 8px;
+    color: rgb(255, 255, 255);
+}
+
+#build-player-board > .buttons > .start.err::before {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 0;
+    top: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom: 10px solid rgb(0, 22, 48);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
 }
 
 #build-player-board > .grid > .grid-cell {
