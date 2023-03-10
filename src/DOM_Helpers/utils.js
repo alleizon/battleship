@@ -60,7 +60,8 @@ const Utils = (() => {
       <div class="ship" draggable="true" data-ship-length="2"></div>
     </div>`;
 
-  const buttonsHTML = () => `<button class="start" type="button">Start</button>
+  const buttonsHTML =
+    () => `<button class="start" data-err-tip="You have not placed all ships" type="button">Start</button>
     <button class="randomise" type="button">Randomise</button>
     <button class="reset" type="button">Reset</button>`;
 

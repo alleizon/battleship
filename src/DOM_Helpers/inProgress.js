@@ -95,7 +95,6 @@ const gameInProgress = (() => {
 
   const getGridElement = (grid) => {
     const gridDiv = document.createElement("div");
-
     gridDiv.classList.add("grid");
     for (let row = 0; row < grid.length; row += 1) {
       for (let col = 0; col < grid[row].length; col += 1) {
@@ -141,7 +140,6 @@ const gameInProgress = (() => {
     name.innerHTML = `<span class="player">Player</span> turn`;
     document.querySelector("body").appendChild(name);
     const [player, computer] = players;
-    console.log(player);
 
     renderPlayer(player, body, legend);
     renderPlayer(computer, body, legend);

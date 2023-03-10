@@ -13,10 +13,10 @@ const Game = (() => {
   const newGame = (ships) => {
     reset();
 
-    mock.populateBoards(computer.board); // to remove. add placement
+    mock.populateBoards(computer.board); // randomise
 
     ships.forEach((element) => {
-      human.board.placeShip(element.type, element.start, element.direction);
+      human.board.placeShip(element.ship, element.start, element.direction);
     });
 
     return [human, computer];

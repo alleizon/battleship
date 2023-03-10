@@ -59,12 +59,15 @@ const BuildBoard = (() => {
   const start = (e) => {
     const shipsPlaced = document.querySelectorAll(".grid > .placed-ship");
     if (shipsPlaced.length !== 5) {
-      e.target.classList.add("error");
+      e.target.classList.add("err");
+      setTimeout(() => {
+        e.target.classList.remove("err");
+      }, 2000);
       return;
-      // style error + remove;
     }
     const ships = [...shipsPlaced].map((ship) => {
       const shipObj = Ship.types.find((shipT) => shipT.name === ship.id);
+      const shipInstance = new Ship(shipObj);
       const direction = ship.className.includes("flip")
         ? "vertical"
         : "horizontal";
@@ -73,7 +76,7 @@ const BuildBoard = (() => {
         +ship.children[0].dataset.placedCol,
       ];
       return {
-        type: shipObj,
+        ship: shipInstance,
         direction,
         start: coords,
       };
