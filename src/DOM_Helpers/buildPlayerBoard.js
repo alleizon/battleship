@@ -57,6 +57,10 @@ const BuildBoard = (() => {
     buttons.classList.add("buttons");
     buttons.innerHTML = Utils.buttonsHTML();
 
+    // buttons.children[0].addEventListener("click", () => {
+
+    // })
+
     return buttons;
   };
 

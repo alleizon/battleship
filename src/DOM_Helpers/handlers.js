@@ -12,6 +12,7 @@ const Handlers = (() => {
   let absStartLeft;
   let absStartTop;
   let elementClicked;
+  let clickedPlaced;
   let startGridCells;
 
   const updatePlacedShip = () => {
@@ -60,58 +61,118 @@ const Handlers = (() => {
   };
 
   const stickAbsShip = (startCell) => {
-    const left = startCell.offsetLeft;
-    const top = startCell.offsetTop;
+    const i = [...elementClicked.children].findIndex(
+      (el) => el === clickedPlaced
+    );
+    const direction = elementClicked.className.includes("flip")
+      ? "vertical"
+      : "horizontal";
+    let left = +startCell.offsetLeft;
+    let top = +startCell.offsetTop;
+    if (direction === "horizontal") left -= i * 41;
+    else top -= i * 41;
     elementClicked.style.left = `${left}px`;
     elementClicked.style.top = `${top}px`;
   };
 
   const validateAbsDrag = (gridCell) => {
-    const { length } = elementClicked.children;
+    // fix this algo
+    // drag sperging out potentially fixed
+
+    const children = Array.from(elementClicked.children);
+    const { length } = children;
+    const clickedIndex = children.findIndex((el) => el === clickedPlaced);
+    const cellsToCheck = [];
+    const afterCells = length - clickedIndex - 1;
+    const beforeCells = clickedIndex;
+    let i = afterCells;
+    let j = beforeCells;
+    const row = +gridCell.dataset.row;
+    const col = +gridCell.dataset.col;
     const direction = elementClicked.className.includes("flip")
       ? "vertical"
       : "horizontal";
-    const row = +gridCell.dataset.row;
-    const col = +gridCell.dataset.col;
+    cellsToCheck.push(gridCell);
+    let curRow = row;
+    let curCol = col;
+
+    while (i) {
+      if (direction === "horizontal") {
+        curCol += 1;
+        if (curCol < 10 && curCol >= 0) {
+          const add = document.querySelector(
+            `.grid > .grid-cell[data-row="${row}"][data-col="${curCol}"]`
+          );
+          cellsToCheck.push(add);
+        }
+      } else {
+        curRow += 1;
+        if (curRow < 10 && curRow >= 0) {
+          const add = document.querySelector(
+            `.grid > .grid-cell[data-row="${curRow}"][data-col="${col}"]`
+          );
+          cellsToCheck.push(add);
+        }
+      }
+      i -= 1;
+    }
+    curCol = col;
+    curRow = row;
+    while (j) {
+      if (direction === "horizontal") {
+        curCol -= 1;
+        if (curCol < 10 && curCol >= 0) {
+          const add = document.querySelector(
+            `.grid > .grid-cell[data-row="${row}"][data-col="${curCol}"]`
+          );
+          cellsToCheck.push(add);
+        }
+      } else {
+        curRow -= 1;
+        if (curRow < 10 && curRow >= 0) {
+          const add = document.querySelector(
+            `.grid > .grid-cell[data-row="${curRow}"][data-col="${col}"]`
+          );
+          cellsToCheck.push(add);
+        }
+      }
+      j -= 1;
+    }
 
     const addedCells = [];
 
     if (direction === "horizontal") {
-      if (length + col > 10) {
-        // error
+      if (
+        col + afterCells > 10 ||
+        col - beforeCells < 0 ||
+        cellsToCheck.length !== length
+      ) {
         return false;
       }
-      for (let i = 0; i < length; i += 1) {
-        const checkCell = document.querySelector(
-          `.grid-cell[data-row="${row}"][data-col="${col + i}"]`
-        );
+      cellsToCheck.forEach((gridCellC) => {
         if (
-          checkCell.dataset.occupied !== elementClicked.id &&
-          checkCell.dataset.occupied !== "none"
-        ) {
-          // error
-          return false;
-        }
-        addedCells.push(checkCell);
-      }
+          (gridCellC.dataset.occupied === elementClicked.id ||
+            gridCellC.dataset.occupied === "none") &&
+          +gridCellC.dataset.row === row
+        )
+          addedCells.push(gridCellC);
+      });
     } else {
-      if (length + row > 10) {
-        // error
+      if (
+        row + afterCells > 10 ||
+        row - beforeCells < 0 ||
+        cellsToCheck.length !== length
+      ) {
         return false;
       }
-      for (let i = 0; i < length; i += 1) {
-        const checkCell = document.querySelector(
-          `.grid-cell[data-row="${row + i}"][data-col="${col}"]`
-        );
+      cellsToCheck.forEach((gridCellC) => {
         if (
-          checkCell.dataset.occupied !== elementClicked.id &&
-          checkCell.dataset.occupied !== "none"
-        ) {
-          // error
-          return false;
-        }
-        addedCells.push(checkCell);
-      }
+          (gridCellC.dataset.occupied === elementClicked.id ||
+            gridCellC.dataset.occupied === "none") &&
+          +gridCellC.dataset.col === col
+        )
+          addedCells.push(gridCellC);
+      });
     }
     return addedCells.length === length;
   };
@@ -119,7 +180,6 @@ const Handlers = (() => {
   const getGridCellByOffset = (mouseX, mouseY) => {
     const CELL_LENGTH = 41;
     const CELL_HEIGHT = 41;
-
     const diffX = mouseX % CELL_LENGTH;
     const diffY = mouseY % CELL_HEIGHT;
     const cellStartX = mouseX - diffX;
@@ -156,6 +216,7 @@ const Handlers = (() => {
     absStartLeft = undefined;
     absStartTop = undefined;
     elementClicked = undefined;
+    clickedPlaced = undefined;
     startGridCells = [];
   };
 
@@ -177,11 +238,14 @@ const Handlers = (() => {
     }, 1500);
   };
 
+  // TODO: fix dragging by placed-cell other than the head;
+
   const absFlip = (e) => {
-    if (absStartX !== absEndX && absStartY !== absEndY) {
+    if (absStartX !== absEndX || absStartY !== absEndY) {
       resetAbsGlobals();
       return;
     }
+
     const isParent = !e.target.className.includes("placed-cell");
 
     const element = isParent ? e.target : e.target.parentElement;
@@ -263,6 +327,9 @@ const Handlers = (() => {
       elementClicked = e.target.className.includes("placed-cell")
         ? e.target.parentElement
         : e.target;
+      if (e.target.className.includes("placed-cell")) {
+        clickedPlaced = e.target;
+      }
       startGridCells = document.querySelectorAll(
         `body > .grid > .grid-cell[data-occupied="${elementClicked.id}"]`
       );
@@ -274,26 +341,37 @@ const Handlers = (() => {
     }
 
     if (type === "drag") {
-      let isValid;
       if (!elementClicked) return;
-      const mouseX = elementClicked.offsetLeft + e.layerX;
-      const mouseY = elementClicked.offsetTop + e.layerY;
-      const mouseCell = getGridCellByOffset(mouseX, mouseY);
+      let isValid;
+      let hoverGridCell;
+
       if (
-        mouseX > MIN_MOUSE &&
-        mouseX < MAX_MOUSE &&
-        mouseY > MIN_MOUSE &&
-        mouseY < MAX_MOUSE
+        e.target.className.includes("placed-cell") &&
+        e.target.parentElement === clickedPlaced.parentElement
       ) {
-        isValid = validateAbsDrag(mouseCell);
+        const mouseX = elementClicked.offsetLeft + e.layerX;
+        const mouseY = elementClicked.offsetTop + e.layerY;
+        hoverGridCell = getGridCellByOffset(mouseX, mouseY);
+        if (
+          mouseX > MIN_MOUSE &&
+          mouseX < MAX_MOUSE &&
+          mouseY > MIN_MOUSE &&
+          mouseY < MAX_MOUSE
+        ) {
+          isValid = validateAbsDrag(hoverGridCell);
+        }
+      } else if (e.target.className.includes("grid-cell")) {
+        hoverGridCell = e.target;
+        isValid = validateAbsDrag(hoverGridCell);
       }
 
       if (isValid) {
         elementClicked.classList.add("valid");
         elementClicked.classList.remove("invalid");
-        stickAbsShip(mouseCell);
+        stickAbsShip(hoverGridCell);
         return;
       }
+
       dragX = +e.x;
       dragY = +e.y;
       const newX = dragX - absStartX;
@@ -331,7 +409,8 @@ const Handlers = (() => {
               gridCellCol + i
             }"]`
           );
-          if (current) gridCells.push(current);
+          if (current && current.dataset.occupied === "none")
+            gridCells.push(current);
         }
         for (let i = 0; i < leftCells; i += 1) {
           const current = document.querySelector(
