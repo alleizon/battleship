@@ -48,14 +48,18 @@ const Handlers = (() => {
       const gcellCpy = gcell;
       gcellCpy.dataset.occupied = elementClicked.id;
     });
+
     const placedChildren = Array.from(elementClicked.children);
     placedChildren.forEach((oldPlacedC, i) => {
       const cpy = oldPlacedC;
       cpy.dataset.placedRow = toUpdate[i].dataset.row;
       cpy.dataset.placedCol = toUpdate[i].dataset.col;
     });
-    [...startGridCells].forEach((gcOld) => {
-      const cpy = gcOld;
+    const oldUpdate = [...startGridCells].filter(
+      (gcOld) => !toUpdate.includes(gcOld)
+    );
+    oldUpdate.forEach((c) => {
+      const cpy = c;
       cpy.dataset.occupied = "none";
     });
   };
@@ -76,9 +80,6 @@ const Handlers = (() => {
   };
 
   const validateAbsDrag = (gridCell) => {
-    // fix this algo
-    // drag sperging out potentially fixed
-
     const children = Array.from(elementClicked.children);
     const { length } = children;
     const clickedIndex = children.findIndex((el) => el === clickedPlaced);
@@ -238,8 +239,6 @@ const Handlers = (() => {
     }, 1500);
   };
 
-  // TODO: fix dragging by placed-cell other than the head;
-
   const absFlip = (e) => {
     if (absStartX !== absEndX || absStartY !== absEndY) {
       resetAbsGlobals();
@@ -313,6 +312,7 @@ const Handlers = (() => {
       if (elementClicked.className.includes("invalid")) {
         elementClicked.style.left = `${absStartLeft}px`;
         elementClicked.style.top = `${absStartTop}px`;
+        elementClicked.classList.remove("invalid");
         elementClicked = undefined;
         return;
       }
