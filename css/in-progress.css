@@ -235,15 +235,11 @@ body.in-progress .legend div.legend-miss::before {
 }
 
 .reset-game {
-    width: 65px;
+    width: fit-content;
     height: 30px;
-    background-color: rgb(0, 0, 0);
-    border: 0px solid transparent;
-    color: white;
     font-weight: 600;
     font-size: 1rem;
-    padding: 0;
-    border-radius: 4px;
+    border: 1px solid black;
     cursor: pointer;
     align-self: center;
 
