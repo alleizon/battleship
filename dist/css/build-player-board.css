@@ -158,7 +158,7 @@ b {
 }
 
 #build-player-board > .grid > .grid-cell {
-    background-color: white;
+    background-color: #a5b4fc;
     transition: all 0.2s ease-in-out;
 }
 

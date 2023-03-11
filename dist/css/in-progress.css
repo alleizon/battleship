@@ -61,7 +61,7 @@ body.in-progress .grid {
 body.in-progress .grid > div[data-cell="cell"] {
     position: relative;
     transition: all 0.2s ease-in-out;
-    background-color: white;
+    background-color: var(--grid-cell-bg);
 }
 
 #computer > .grid > div[data-cell="cell"] {
