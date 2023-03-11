@@ -106,7 +106,7 @@ const GameInProgress = (() => {
         displayComputerTurn(cresult);
         restoreGridListener(this, handler);
         setName("Player");
-      }, 0);
+      }, 1000);
     }
   }
 

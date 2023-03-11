@@ -13,6 +13,7 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
+    "ignorePatterns": ["dist/main.js"],
     "rules": {
         "import/extensions": [
             "error", 
