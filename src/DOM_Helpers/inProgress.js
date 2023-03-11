@@ -41,16 +41,16 @@ const GameInProgress = (() => {
   };
 
   const displayComputerTurn = (res) => {
-    const [cell, x, y] = res;
+    const [result, x, y] = res;
 
-    if (cell instanceof Error) return;
+    if (res instanceof Error) return;
 
     const cellDiv = document.querySelector(
       `#player > .grid > div[data-row="${x}"][data-col="${y}"]`
     );
-    if (cell instanceof Ship) {
+    if (result.ship) {
       cellDiv.classList.add("ship-hit");
-    } else if (cell === "") {
+    } else {
       cellDiv.classList.add("miss");
     }
   };
@@ -65,18 +65,32 @@ const GameInProgress = (() => {
 
       const result = Game.playHuman(x, y);
       if (result.winner) {
-        e.target.classList.add("ship-cell");
+        result.sunkCoord.forEach((pair) => {
+          document
+            .querySelector(
+              `#computer div[data-row="${pair[0]}"][data-col="${pair[1]}"]`
+            )
+            .classList.add("ship-cell");
+        });
         e.target.classList.add("ship-hit");
         gameOver(result.winner);
         this.removeEventListener("click", handler);
         return;
       }
-      if (!(result instanceof Ship)) {
+      if (!result.ship) {
         e.target.classList.add("miss");
       }
-      if (result instanceof Ship) {
-        e.target.classList.add("ship-cell");
+      if (result.ship) {
         e.target.classList.add("ship-hit");
+      }
+      if (result.sunkCoord) {
+        result.sunkCoord.forEach((pair) => {
+          document
+            .querySelector(
+              `#computer div[data-row="${pair[0]}"][data-col="${pair[1]}"]`
+            )
+            .classList.add("ship-cell");
+        });
       }
 
       this.removeEventListener("click", handler);

@@ -163,7 +163,7 @@ body.in-progress .legend > p {
 }
 
 body.in-progress .legend > div > div > div,
-body.in-progress .legend div.legend-ship {
+body.in-progress .legend div.legend-ship > div.legend-ship-cell {
     width: 30px;
     height: 30px;
     border: 2px solid transparent;
@@ -177,7 +177,13 @@ body.in-progress .legend > div > span {
 
 body.in-progress .legend div.legend-ship {
     position: relative;
-    border-color: black;
+    display: flex;
+    background-color: black;
+    border: 1px solid black;
+    gap: 1px;
+}
+
+body > div.legend > div.ship > div > div.legend-ship-cell {
     background-color: var(--ship-cell-color);
 }
 

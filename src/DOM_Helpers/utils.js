@@ -1,8 +1,12 @@
 const Utils = (() => {
   const legendHTML = () => `<p>Legend :</p>
     <div class="ship">
-      <span>Ship</span>
-      <div class="legend-ship"></div>
+      <span>Sunk enemy ship</span>
+      <div class="legend-ship">
+      <div class="legend-ship-cell"></div>
+      <div class="legend-ship-cell"></div>
+      <div class="legend-ship-cell"></div>
+      </div>
     </div>
     <div class="miss">
       <span>Missed hit</span>
